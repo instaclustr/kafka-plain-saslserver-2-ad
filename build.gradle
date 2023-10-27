@@ -1,4 +1,5 @@
 buildscript {
+    ext.kafka_version = '3.3.2'
     ext.scala_version = '2.13'
     ext.kotlin_version = '1.9.10'
     ext.unboundid_version = '6.0.10'
@@ -14,10 +15,6 @@ buildscript {
     ext.java_version = '17'
 
     ext.org_jetbrains_kotlin = 'org.jetbrains.kotlin'
-    ext.kafka_version = project.hasProperty('kafka_version') ? project.kafka_version : '3.6.0'
-
-
-
 }
 
 plugins {
@@ -31,7 +28,7 @@ plugins {
 }
 
 group 'com.ultratendency.kafka.ldap'
-version '1.2.0-SNAPSHOT'
+version '1.2.0'
 
 sourceCompatibility = "$java_version"
 
