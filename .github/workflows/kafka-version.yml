@@ -1,0 +1,35 @@
+name: Kafka-versioning
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    inputs:
+      kafka_version: ${{ matrix.kafka_version }}
+
+    strategy:
+      matrix:
+        kafka_version:
+          - '3.6.0'
+          - 'latest_version_here'
+          - 'another_version_here'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set Gradle Properties
+        run: ./gradlew -P kafka_version=${{ inputs.kafka_version }} clean build
+
+      # Add other build steps here
+
+      - name: Publish to GitHub Packages
+        run: ./gradlew publish
+        env:
+          USERNAME: ${{ secrets.GITHUB_USERNAME }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
