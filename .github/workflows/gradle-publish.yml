@@ -5,6 +5,13 @@ on:
   push:
     branches:
       - main
+  
+  pull_request:
+    paths:
+      - '**/*.gradle' # Adjust the path pattern to match your Gradle files
+      - '**/*.properties' # Adjust the path pattern to match your properties files
+    types:
+      - synchronize
 
 jobs:
   build:
@@ -16,8 +23,6 @@ jobs:
       contents: read
       packages: write
 
-    inputs:
-      kafka_version: ${{ matrix.kafka_version }}
 
     strategy:
       matrix:
@@ -37,9 +42,22 @@ jobs:
         distribution: 'temurin'
         server-id: github
         settings-path: ${{ github.workspace }}
+        
+    - name: Get Updated Kafka Version
+      id: get_kafka_version
+      run: |
+        PR_NUMBER=$(echo "${{ github.event_name }}" | jq --raw-output .pull_request.number)
+        KAFKA_VERSION=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER" \
+            | jq --raw-output .head.repo_item.version)
+
+        echo "Kafka version from Dependabot: $KAFKA_VERSION"
+        
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Set Gradle Properties
-      run: ./gradlew -P kafka_version=${{ inputs.kafka_version }} clean build
+      run: ./gradlew -P kafka_version=${{ env.KAFKA_VERSION }} clean build
 
     - name: Publish to GitHub Packages
       uses: gradle/gradle-build-action@v2.9.0
