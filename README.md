@@ -3,14 +3,12 @@
 [![Gradle build](https://github.com/ultratendency/kafka-ldap-integration/actions/workflows/gradle.yml/badge.svg)](https://github.com/ultratendency/kafka-ldap-integration/actions/workflows/gradle.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ultratendency_kafka-ldap-integration&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ultratendency_kafka-ldap-integration)
 
-Enhancing kafka 2.x with
+Enhancing kafka 3.x with
 - customized SimpleLDAPAuthentication using LDAPS simple bind for authentication
-- customized SimpleACLAuthorizer using LDAPS compare-matched for group membership verification
+- In release 1.1.0 we have had support for authorization which is compatible to Kafka 2.8.1 
+- The authorization feature was removed due to incompatibilites with latest Kafka versions (3.0 onwards) starting with release 1.2.0.
 
 Thus, moving authentication from user and passwords in JAAS context file on kafka brokers to LDAP server
-
-By defining Read/Write allowance with LDAP groups, authorization is moved from
-Zookeeper Access Control Lists to group membership verification.
 
 Binding and group membership information is cached (limited lifetime after write),
 giving minor performance penalty and reduced LDAPS traffic.
@@ -44,7 +42,7 @@ A tutorial with configuration examples is available in the [User Guide](docs/ind
 ./gradlew clean build shadowJar -x test
 ```
 
-The result is `build/libs/kafka-ldap-integration-<version>.jar`, which contains the authentication and authorization classes, along with all of their dependencies.
+The result is `build/libs/kafka-ldap-integration-<version>.jar`, which contains the authentication classes, along with all of their dependencies.
 
 **N.B.** This jar must be added to the classpath for the Kafka broker. The easist way to do that is to copy the jar into the directory `$KAFKA_HOME/libs`.
 
