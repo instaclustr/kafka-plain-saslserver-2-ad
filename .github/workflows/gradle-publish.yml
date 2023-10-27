@@ -16,6 +16,16 @@ jobs:
       contents: read
       packages: write
 
+    inputs:
+      kafka_version: ${{ matrix.kafka_version }}
+
+    strategy:
+      matrix:
+        kafka_version:
+          - '3.6.0'
+          - 'latest_version_here'
+          - 'another_version_here'
+
     steps:
     - name: Checkout
       uses: actions/checkout@v4.1.1
@@ -28,10 +38,8 @@ jobs:
         server-id: github
         settings-path: ${{ github.workspace }}
 
-    - name: Build with Gradle
-      uses: gradle/gradle-build-action@v2.9.0
-      with:
-        arguments: build
+    - name: Set Gradle Properties
+      run: ./gradlew -P kafka_version=${{ inputs.kafka_version }} clean build
 
     - name: Publish to GitHub Packages
       uses: gradle/gradle-build-action@v2.9.0
